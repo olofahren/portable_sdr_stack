@@ -1,0 +1,46 @@
+services:
+  rtl433-api:
+    build:
+      context: ./rtl_433_api
+      dockerfile: Dockerfile
+    container_name: rtl433-api
+    ports:
+      - "8000:8000"
+    environment:
+      RECORDINGS_DIR: /data/recordings
+      OUTPUT_DIR: /data/output
+      RTL433_TIMEOUT_SECONDS: "30"
+    volumes:
+      - ./freq-analysis/recordings:/data/recordings:ro
+      - ./rtl_433_api/output:/data/output
+    restart: unless-stopped
+
+  freq-analysis:
+    build:
+      context: ./freq-analysis
+      dockerfile: Dockerfile
+    container_name: freq-analysis
+    init: true
+    depends_on:
+      - rtl433-api
+    environment:
+      RUST_LOG: info
+      RTL433_API_URL: http://rtl433-api:8000
+    ports:
+      - "9001:9001"
+    volumes:
+      - ./freq-analysis/recordings:/app/recordings
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+    restart: unless-stopped
+
+  portable-scanner-dashboard:
+    build:
+      context: ./portable_scanner_dashboard
+      dockerfile: Dockerfile
+    container_name: portable-scanner-dashboard
+    depends_on:
+      - freq-analysis
+    ports:
+      - "5173:5173"
+    restart: unless-stopped

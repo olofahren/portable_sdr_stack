@@ -1,0 +1,9 @@
+[submodule "freq-analysis"]
+	path = freq-analysis
+	url = git@github.com:olofahren/freq-analysis.git
+[submodule "rtl_433_api"]
+	path = rtl_433_api
+	url = git@github.com:olofahren/rtl_433_api.git
+[submodule "portable_scanner_dashboard"]
+	path = portable_scanner_dashboard
+	url = git@github.com:olofahren/portable_scanner_dashboard.git
